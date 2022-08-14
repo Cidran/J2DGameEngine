@@ -4,6 +4,7 @@ public class GameContainer implements Runnable {
 
 	private Thread thread;
 	private Window window;
+	private Renderer renderer;
 
 	private boolean render = false;
 	private boolean running = false;
@@ -22,6 +23,7 @@ public class GameContainer implements Runnable {
 	public void init() {
 		thread = new Thread(this);
 		window = new Window(this);
+		renderer = new Renderer(this);
 	}
 
 	public void start() {
@@ -68,6 +70,7 @@ public class GameContainer implements Runnable {
 				}
 
 				if (render) {
+					renderer.clear();
 					// TODO Render Game
 					window.update();
 					frames++;
@@ -118,6 +121,10 @@ public class GameContainer implements Runnable {
 
 	public int getHEIGHT() {
 		return HEIGHT;
+	}
+
+	public Window getWindow() {
+		return window;
 	}
 
 }
