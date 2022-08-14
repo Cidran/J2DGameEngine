@@ -1,8 +1,5 @@
 package engine;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-
 public class GameContainer implements Runnable {
 
 	private Thread thread;
@@ -67,8 +64,6 @@ public class GameContainer implements Runnable {
 				render = true;
 
 				// TODO Update game
-				
-				//TODO fix mouse buttons
 				input.update();
 				
 				if (frameTime >= 1.0) {
