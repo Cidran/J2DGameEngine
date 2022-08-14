@@ -3,10 +3,17 @@ package engine;
 public class GameContainer implements Runnable {
 
 	private Thread thread;
+	private Window window;
 
 	private boolean render = false;
 	private boolean running = false;
-	private final double UPDATE_CAP = 1.0 / 60.0;
+	private final double FPS_TARGET = 60.0;
+	private final double UPDATE_CAP = 1.0 / FPS_TARGET;
+	
+	private final int WIDTH = 320;
+	private final int HEIGHT = 240;
+	private float scale = 2f;
+	private String title = "2DJava Game";
 
 	public GameContainer() {
 
@@ -14,6 +21,7 @@ public class GameContainer implements Runnable {
 
 	public void init() {
 		thread = new Thread(this);
+		window = new Window(this);
 	}
 
 	public void start() {
@@ -61,6 +69,7 @@ public class GameContainer implements Runnable {
 
 				if (render) {
 					// TODO Render Game
+					window.update();
 					frames++;
 				} else {
 					try {
@@ -85,6 +94,30 @@ public class GameContainer implements Runnable {
 	public static void main(String[] args) {
 		GameContainer gc = new GameContainer();
 		gc.start();
+	}
+
+	public float getScale() {
+		return scale;
+	}
+
+	public void setScale(float scale) {
+		this.scale = scale;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public int getWIDTH() {
+		return WIDTH;
+	}
+
+	public int getHEIGHT() {
+		return HEIGHT;
 	}
 
 }
