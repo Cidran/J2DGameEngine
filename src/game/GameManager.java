@@ -22,7 +22,7 @@ public class GameManager extends AbstractGame {
 			System.out.println("Clicked!");
 		}
 		
-		temp+= dt * 25;
+		temp+= dt * 20;
 		if(temp > 4) {
 			temp = 0;
 		}

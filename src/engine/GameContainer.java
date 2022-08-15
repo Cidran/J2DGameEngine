@@ -12,7 +12,7 @@ public class GameContainer implements Runnable {
 	private boolean running = false;
 	private final double FPS_TARGET = 60.0;
 	private final double UPDATE_CAP = 1.0 / FPS_TARGET;
-	
+
 	private final int WIDTH = 320;
 	private final int HEIGHT = 240;
 	private float scale = 2f;
@@ -66,7 +66,7 @@ public class GameContainer implements Runnable {
 
 				game.update(this, (float) UPDATE_CAP);
 				input.update();
-				
+
 				if (frameTime >= 1.0) {
 					frameTime = 0;
 					fps = frames;
@@ -77,6 +77,7 @@ public class GameContainer implements Runnable {
 				if (render) {
 					renderer.clear();
 					game.render(this, renderer);
+					renderer.drawText("FPS: " + fps, 0, 0, 0xffffff00);
 					window.update();
 					frames++;
 				} else {
