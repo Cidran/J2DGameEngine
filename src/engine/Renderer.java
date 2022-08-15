@@ -3,6 +3,7 @@ package engine;
 import java.awt.image.DataBufferInt;
 
 import engine.gfx.Image;
+import engine.gfx.ImageTile;
 
 public class Renderer {
 
@@ -30,26 +31,22 @@ public class Renderer {
 
 	public void drawImage(Image image, int offX, int offY) {
 
+		if (offX < -image.getW())
+			return;
+
+		if (offY < -image.getH())
+			return;
+
+		if (offX >= pW)
+			return;
+
+		if (offY >= pH)
+			return;
+
 		int newX = 0;
 		int newY = 0;
 		int newWidth = image.getW();
 		int newHeight = image.getH();
-		
-		if(offX < -newWidth) {
-			return;
-		}
-		
-		if(offY < -newHeight) {
-			return;
-		}
-		
-		if(offX >= pW) {
-			return;
-		}
-		
-		if(offY >= pH) {
-			return;
-		}
 
 		if (newX + offX < 0) {
 			newX -= offX;
@@ -70,6 +67,48 @@ public class Renderer {
 		for (int y = 0; y < newHeight; y++) {
 			for (int x = 0; x < newWidth; x++) {
 				setPixel(x + offX, y + offY, image.getP()[x + y * image.getW()]);
+			}
+		}
+	}
+
+	public void drawImageTile(ImageTile image, int offX, int offY, int tileX, int tileY) {
+		if (offX < -image.getTileW())
+			return;
+
+		if (offY < -image.getTileW())
+			return;
+
+		if (offX >= pW)
+			return;
+
+		if (offY >= pH)
+			return;
+
+		int newX = 0;
+		int newY = 0;
+		int newWidth = image.getTileW();
+		int newHeight = image.getTileH();
+
+		if (newX + offX < 0) {
+			newX -= offX;
+		}
+
+		if (newY + offY < 0) {
+			newY -= offY;
+		}
+
+		if (newWidth + offX > pW) {
+			newWidth -= newWidth + offX - pW;
+		}
+
+		if (newHeight + offY > pH) {
+			newHeight -= newHeight + offY - pH;
+		}
+
+		for (int y = 0; y < newHeight; y++) {
+			for (int x = 0; x < newWidth; x++) {
+				setPixel(x + offX, y + offY,
+						image.getP()[(x + tileX * image.getTileW()) + (y + tileY * image.getTileH()) * image.getW()]);
 			}
 		}
 	}
