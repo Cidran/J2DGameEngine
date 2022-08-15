@@ -5,11 +5,14 @@ import java.awt.event.MouseEvent;
 import engine.AbstractGame;
 import engine.GameContainer;
 import engine.Renderer;
+import engine.gfx.Image;
 
 public class GameManager extends AbstractGame {
 	
+	private Image image;
+	
 	public GameManager() {
-		
+		image = new Image("/texture.png");
 	}
 
 	@Override
@@ -21,7 +24,7 @@ public class GameManager extends AbstractGame {
 
 	@Override
 	public void render(GameContainer gc, Renderer r) {
-		
+		r.drawImage(image, gc.getInput().getMouseX(), gc.getInput().getMouseY());
 	}
 	
 	public static void main(String[] args) {
