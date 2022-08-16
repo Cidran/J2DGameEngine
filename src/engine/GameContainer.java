@@ -10,7 +10,7 @@ public class GameContainer implements Runnable {
 
 	private boolean render = false;
 	private boolean running = false;
-	private final double FPS_TARGET = 60.0;
+	private final double FPS_TARGET = 120.0;
 	private final double UPDATE_CAP = 1.0 / FPS_TARGET;
 
 	private final int WIDTH = 320;
