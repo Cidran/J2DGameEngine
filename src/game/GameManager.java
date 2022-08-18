@@ -6,17 +6,24 @@ import engine.AbstractGame;
 import engine.GameContainer;
 import engine.Renderer;
 import engine.audio.SoundClip;
-import engine.gfx.ImageTile;
+import engine.gfx.Image;
 
 public class GameManager extends AbstractGame {
 
-	private ImageTile image;
+	private Image image, alphaImage;
 	private SoundClip clip;
 
 	public GameManager() {
-		image = new ImageTile("/boom.png", 16, 16);
+		
+		image = new Image("/images/texture.png");
+		alphaImage = new Image("/images/texture_alpha_test.png");
+		alphaImage.setAlpha(true);
 		clip = new SoundClip("/audio/sample.wav");
 
+	}
+	
+	public void reset() {
+		
 	}
 
 	@Override
@@ -37,7 +44,8 @@ public class GameManager extends AbstractGame {
 
 	@Override
 	public void render(GameContainer gc, Renderer r) {
-		r.drawImageTile(image, gc.getInput().getMouseX() - 8, gc.getInput().getMouseY() - 8, (int) temp, 0);
+		r.drawImage(alphaImage, gc.getInput().getMouseX() - 8, gc.getInput().getMouseY() - 8);
+		r.drawImage(image, 10, 10);
 	}
 
 	public static void main(String[] args) {
