@@ -2,7 +2,8 @@ package engine;
 
 import java.awt.image.DataBufferInt;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
+import java.util.Comparator;
 
 import engine.gfx.Font;
 import engine.gfx.Image;
@@ -12,7 +13,7 @@ import engine.gfx.ImageTile;
 public class Renderer {
 
 	private Font font = Font.STANDARD;
-	private List<ImageRequest> imageRequest = new ArrayList<ImageRequest>();
+	private ArrayList<ImageRequest> imageRequest = new ArrayList<ImageRequest>();
 
 	private int pW, pH;
 	private int[] p;
@@ -36,11 +37,26 @@ public class Renderer {
 
 	public void process() {
 		processing = true;
+		
+		Collections.sort(imageRequest, new Comparator<ImageRequest>() {
+			@Override
+			public int compare(ImageRequest i0, ImageRequest i1) {
+				if(i0.zDepth < i1.zDepth) {
+					return -1;
+				}
+				if(i0.zDepth > i1.zDepth) {
+					return 1;
+				}
+				return 0;
+			}
+		});
+		
 		for (int i = 0; i < imageRequest.size(); i++) {
 			ImageRequest ir = imageRequest.get(i);
 			setzDepth(ir.zDepth);
 			drawImage(ir.image, ir.offX, ir.offY);
 		}
+		
 		imageRequest.clear();
 		processing = false;
 	}
@@ -53,20 +69,23 @@ public class Renderer {
 			return;
 		}
 
-		if (zb[x + y * pW] > zDepth)
+		int index = x + y * pW;
+
+		if (zb[index] > zDepth)
 			return;
 
+		zb[index] = zDepth;
+
 		if (alpha == 255) {
-			p[x + y * pW] = value;
+			p[index] = value;
 		} else {
-			int pixelColor = p[x + y * pW];
-			int newRed = ((pixelColor >> 16) & 0xff)
-					- (int) ((((pixelColor >> 16) & 0xff) - ((value >> 16) & 0xff)) * (alpha / 255f));
-			int newGreen = ((pixelColor >> 8) & 0xff)
-					- (int) ((((pixelColor >> 8) & 0xff) - ((value >> 8) & 0xff)) * (alpha / 255f));
+			int pixelColor = p[index];
+			
+			int newRed = ((pixelColor >> 16) & 0xff) - (int) ((((pixelColor >> 16) & 0xff) - ((value >> 16) & 0xff)) * (alpha / 255f));
+			int newGreen = ((pixelColor >> 8) & 0xff) - (int) ((((pixelColor >> 8) & 0xff) - ((value >> 8) & 0xff)) * (alpha / 255f));
 			int newBlue = (pixelColor & 0xff) - (int) (((pixelColor & 0xff) - (value & 0xff)) * (alpha / 255f));
 
-			p[x + y * pW] = (255 << 24 | newRed << 16 | newGreen << 8 | newBlue);
+			p[index] = (255 << 24 | newRed << 16 | newGreen << 8 | newBlue);
 		}
 
 	}
@@ -95,7 +114,7 @@ public class Renderer {
 	}
 
 	public void drawImage(Image image, int offX, int offY) {
-
+		
 		if (image.isAlpha() && !processing) {
 			imageRequest.add(new ImageRequest(image, zDepth, offX, offY));
 			return;
@@ -127,6 +146,11 @@ public class Renderer {
 
 	public void drawImageTile(ImageTile image, int offX, int offY, int tileX, int tileY) {
 
+		if (image.isAlpha() && !processing) {
+			imageRequest.add(new ImageRequest(image.getTileImage(tileX, tileY), zDepth, offX, offY));
+			return;
+		}
+		
 		if (offX < -image.getW() || offY < -image.getH() || offX >= pW || offY >= pH)
 			return;
 
