@@ -10,13 +10,12 @@ public class GameContainer implements Runnable {
 
 	private boolean render = false;
 	private boolean running = false;
-	private final double FPS_TARGET = 60.0;
-	private final double UPDATE_CAP = 1.0 / FPS_TARGET;
+	private final double UPDATE_CAP = 1.0 / 60.0;
 
-	private final int WIDTH = 320;
+	private final int WIDTH = 360;
 	private final int HEIGHT = 240;
-	private float scale = 2.5f;
-	private String title = "2DJava Game";
+	private float scale = 2f;
+	private String title = "2DJava Game Engine";
 
 	public GameContainer(AbstractGame game) {
 		this.game = game;
@@ -77,7 +76,7 @@ public class GameContainer implements Runnable {
 					renderer.clear();
 					game.render(this, renderer);
 					renderer.process();
-					renderer.drawText("FPS: " + fps, 0, 0, 0xffffff00);
+					renderer.drawText("FPS: " + fps + "/s", 0, 0, 0xffffffff);
 					window.update();
 					frames++;
 				} else {

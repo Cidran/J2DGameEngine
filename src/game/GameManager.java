@@ -1,32 +1,21 @@
 package game;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-
 import engine.AbstractGame;
 import engine.GameContainer;
 import engine.Renderer;
-import engine.audio.SoundClip;
 import engine.gfx.Image;
-import engine.gfx.ImageTile;
 
 public class GameManager extends AbstractGame {
 
 	private Image image;
-	private ImageTile image2;
-	private SoundClip clip;
-	
-	private int positionX = 10;
-	private int positionY = 10;
-	private int speed = 5;
+	private Image image2;
 
 	public GameManager() {
 		
-		image = new Image("/images/texture.png");
+		image = new Image("/images/light.png");
 		image.setAlpha(true);
-		image2 = new ImageTile("/images/texture_alpha_test.png", 32, 16);
+		image2 = new Image("/images/white.png");
 		image2.setAlpha(true);
-		clip = new SoundClip("/audio/sample.wav");
 	}
 	
 	public void reset() {
@@ -35,24 +24,6 @@ public class GameManager extends AbstractGame {
 
 	@Override
 	public void update(GameContainer gc, float dt) {
-
-		if (gc.getInput().isButtonDown(MouseEvent.BUTTON1)) {
-			System.out.println("Clicked!");
-			clip.play();
-		}
-		
-		if(gc.getInput().isKey(KeyEvent.VK_W)) {
-			positionY -= speed;
-		}
-		if(gc.getInput().isKey(KeyEvent.VK_S)) {
-			positionY += speed;
-		}
-		if(gc.getInput().isKey(KeyEvent.VK_A)) {
-			positionX -= speed;
-		}
-		if(gc.getInput().isKey(KeyEvent.VK_D)) {
-			positionX += speed;
-		}
 
 		temp += dt * 20;
 		if (temp > 4) {
@@ -64,12 +35,18 @@ public class GameManager extends AbstractGame {
 
 	@Override
 	public void render(GameContainer gc, Renderer r) {
-		r.setzDepth(1);
-		r.drawImageTile(image2, gc.getInput().getMouseX() - 8, gc.getInput().getMouseY() - 8, 1, 1);
+		
+		for(int x = 0; x < image.getW(); x++) {
+			for(int y = 0; y < image.getH(); y++) {
+				r.setLightMap(x, y, image.getP()[x + y * image.getW()]);
+			}
+		}
+		
 		r.setzDepth(0);
-		r.drawImage(image, positionX, positionY);
-		
-		
+		r.drawImage(image2, gc.getInput().getMouseX(), gc.getInput().getMouseY());
+		r.setzDepth(1);
+		r.drawImage(image, 10, 10);
+
 	}
 
 	public static void main(String[] args) {
