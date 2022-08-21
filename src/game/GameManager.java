@@ -14,12 +14,12 @@ public class GameManager extends AbstractGame {
 	public GameManager() {
 		
 		image = new Image("/images/pattern_bg.png");
-		image.setAlpha(false);
+		image.setAlpha(true);
 		blockTest = new Image("/images/block_test.png");
 		blockTest.setLightBlock(Light.FULL);
-		blockTest.setAlpha(false);
+		blockTest.setAlpha(true);
 		
-		light = new Light(400, 0xffffffff);
+		light = new Light(300, 0xffffffff);
 	}
 
 	@Override
@@ -49,7 +49,7 @@ public class GameManager extends AbstractGame {
 
 	public static void main(String[] args) {
 		GameContainer gc = new GameContainer(new GameManager());
-		gc.setWindowSize(360, 240, 2f);
+		gc.setWindowSize(360, 240, 1.5f);
 		gc.setTitle("CidranEngine");
 		gc.start();
 	}

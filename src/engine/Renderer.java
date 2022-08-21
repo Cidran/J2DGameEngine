@@ -4,17 +4,20 @@ import java.awt.image.DataBufferInt;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 import engine.gfx.Font;
 import engine.gfx.Image;
 import engine.gfx.ImageRequest;
 import engine.gfx.ImageTile;
 import engine.gfx.Light;
+import engine.gfx.LightRequest;
 
 public class Renderer {
 
 	private Font font = Font.STANDARD;
-	private ArrayList<ImageRequest> imageRequest = new ArrayList<ImageRequest>();
+	private List<ImageRequest> imageRequest = new ArrayList<ImageRequest>();
+	private List<LightRequest> lightRequest = new ArrayList<LightRequest>();
 
 	private int pW, pH;
 	private int[] p;
@@ -66,6 +69,11 @@ public class Renderer {
 			setzDepth(ir.zDepth);
 			drawImage(ir.image, ir.offX, ir.offY);
 		}
+		
+		for(int i = 0; i < lightRequest.size(); i++) {
+			LightRequest l = lightRequest.get(i);
+			this.drawLightRequest(l.light, l.locX, l.locY);
+		}
 
 		for (int i = 0; i < p.length; i++) {
 			float r = ((lm[i] >> 16) & 0xff) / 255f;
@@ -77,6 +85,7 @@ public class Renderer {
 		}
 
 		imageRequest.clear();
+		lightRequest.clear();
 		processing = false;
 	}
 
@@ -260,8 +269,12 @@ public class Renderer {
 		}
 
 	}
-
+	
 	public void drawLight(Light l, int offX, int offY) {
+		lightRequest.add(new LightRequest(l, offX, offY));
+	}
+
+	private void drawLightRequest(Light l, int offX, int offY) {
 		for (int i = 0; i < l.getDiameter(); i++) {
 			drawLightLine(l, l.getRadius(), l.getRadius(), i, 0, offX, offY);
 			drawLightLine(l, l.getRadius(), l.getRadius(), i, l.getDiameter(), offX, offY);
