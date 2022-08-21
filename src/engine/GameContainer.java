@@ -50,7 +50,9 @@ public class GameContainer implements Runnable {
 		double frameTime = 0;
 		int frames = 0;
 		int fps = 0;
-
+		
+		game.init(this);
+		
 		while (running) {
 			firstTime = currentTime();
 			passedTime = firstTime - lastTime;
@@ -135,6 +137,10 @@ public class GameContainer implements Runnable {
 
 	public Input getInput() {
 		return input;
+	}
+
+	public Renderer getRenderer() {
+		return renderer;
 	}
 
 }
