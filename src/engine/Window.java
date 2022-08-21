@@ -19,10 +19,10 @@ public class Window {
 	private Graphics g;
 
 	public Window(GameContainer gc) {
-		image = new BufferedImage(gc.getWIDTH(), gc.getHEIGHT(), BufferedImage.TYPE_INT_RGB);
+		image = new BufferedImage(gc.getWidth(), gc.getHeight(), BufferedImage.TYPE_INT_RGB);
 		canvas = new Canvas();
 
-		Dimension s = new Dimension((int) (gc.getWIDTH() * gc.getScale()), (int) (gc.getHEIGHT() * gc.getScale()));
+		Dimension s = new Dimension((int) (gc.getWidth() * gc.getScale()), (int) (gc.getHeight() * gc.getScale()));
 
 		canvas.setPreferredSize(s);
 		canvas.setMaximumSize(s);

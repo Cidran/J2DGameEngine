@@ -9,6 +9,7 @@ import engine.gfx.Font;
 import engine.gfx.Image;
 import engine.gfx.ImageRequest;
 import engine.gfx.ImageTile;
+import engine.gfx.Light;
 
 public class Renderer {
 
@@ -21,13 +22,13 @@ public class Renderer {
 	private int[] lm;
 	private int[] lb;
 
-	private int ambientColor = 0xff6b6b6b;
+	private int ambientColor = 0x111111;
 	private int zDepth = 0;
 	private boolean processing = false;
 
 	public Renderer(GameContainer gc) {
-		pW = gc.getWIDTH();
-		pH = gc.getHEIGHT();
+		pW = gc.getWidth();
+		pH = gc.getHeight();
 		p = ((DataBufferInt) gc.getWindow().getImage().getRaster().getDataBuffer()).getData();
 		zb = new int[p.length];
 		lm = new int[p.length];
@@ -49,13 +50,14 @@ public class Renderer {
 		Collections.sort(imageRequest, new Comparator<ImageRequest>() {
 			@Override
 			public int compare(ImageRequest i0, ImageRequest i1) {
+				int result = 0;
 				if (i0.zDepth < i1.zDepth) {
-					return -1;
+					result = -1;
 				}
 				if (i0.zDepth > i1.zDepth) {
-					return 1;
+					result = 1;
 				}
-				return 0;
+				return result;
 			}
 		});
 
@@ -69,8 +71,8 @@ public class Renderer {
 			float r = ((lm[i] >> 16) & 0xff) / 255f;
 			float g = ((lm[i] >> 8) & 0xff) / 255f;
 			float b = (lm[i] & 0xff) / 255f;
-			
-			p[i] = ((int)(((p[i] >> 16) & 0xff) * r) << 16 | (int)(((p[i] >> 18) & 0xff) * g) << 8 | (int)((p[i] & 0xff) * b));
+
+			p[i] = ((int) (((p[i] >> 16) & 0xff) * r) << 16 | (int) (((p[i] >> 8) & 0xff) * g) << 8 | (int) ((p[i] & 0xff) * b));
 		}
 
 		imageRequest.clear();
@@ -244,6 +246,53 @@ public class Renderer {
 			}
 		}
 
+	}
+	
+	public void drawLight(Light l, int offX, int offY) {
+		for(int i = 0; i < l.getDiameter(); i++) {
+			drawLightLine(l, l.getRadius(), l.getRadius(), i, 0, offX, offY);
+			drawLightLine(l, l.getRadius(), l.getRadius(), i, l.getDiameter(), offX, offY);
+			drawLightLine(l, l.getRadius(), l.getRadius(), 0, i, offX, offY);
+			drawLightLine(l, l.getRadius(), l.getRadius(), l.getDiameter()-1, i, offX, offY);
+		}
+	}
+	
+	private void drawLightLine(Light l, int x0, int y0, int x1, int y1, int offX, int offY) {
+		int dx = Math.abs(x1 - x0);
+		int dy = Math.abs(y1 - y0);
+		
+		int sx = x0 < x1 ? 1: -1;
+		int sy = y0 < y1 ? 1: -1;
+		
+		int err = dx - dy;
+		int e2;
+		
+		while(true) {
+			
+			int screenX = x0 - l.getRadius() + offX;
+			int screenY = y0 - l.getRadius() + offY;
+			int lightColor = l.getLightValue(x0, y0);
+			
+			if(lightColor == 0) {
+				return;
+			}
+			
+			setLightMap(screenX, screenY, lightColor);
+			
+			if(x0 == x1 && y0 == y1) {
+				break;
+			}
+			e2 = 2 * err;
+			
+			if(e2 > -1 * dy) {
+				err -= dy;
+				x0 += sx;
+			}
+			if(e2 < dx) {
+				err += dx;
+				y0 += sy;
+			}
+		}
 	}
 
 	public int getzDepth() {

@@ -10,11 +10,11 @@ public class GameContainer implements Runnable {
 
 	private boolean render = false;
 	private boolean running = false;
-	private final double UPDATE_CAP = 1.0 / 60.0;
+	private final double UPDATE_CAP = 1.0 / 120.0;
 
-	private final int WIDTH = 360;
-	private final int HEIGHT = 240;
-	private float scale = 2f;
+	private int width = 1;
+	private int height = 1;
+	private float scale = 1f;
 	private String title = "2DJava Game Engine";
 
 	public GameContainer(AbstractGame game) {
@@ -98,6 +98,12 @@ public class GameContainer implements Runnable {
 	public double currentTime() {
 		return System.nanoTime() / 1000000000.0;
 	}
+	
+	public void setWindowSize(int width, int height, float scale) {
+		this.width = width;
+		this.height = height;
+		this.scale = scale;
+	}
 
 	public float getScale() {
 		return scale;
@@ -115,12 +121,12 @@ public class GameContainer implements Runnable {
 		this.title = title;
 	}
 
-	public int getWIDTH() {
-		return WIDTH;
+	public int getWidth() {
+		return width;
 	}
 
-	public int getHEIGHT() {
-		return HEIGHT;
+	public int getHeight() {
+		return height;
 	}
 
 	public Window getWindow() {

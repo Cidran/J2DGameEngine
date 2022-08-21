@@ -4,21 +4,21 @@ import engine.AbstractGame;
 import engine.GameContainer;
 import engine.Renderer;
 import engine.gfx.Image;
+import engine.gfx.Light;
 
 public class GameManager extends AbstractGame {
 
-	private Image image;
-	private Image image2;
+	private Image image, wood;
+	private Light light;
 
 	public GameManager() {
 		
-		image = new Image("/images/light.png");
+		image = new Image("/images/pattern_bg.png");
 		image.setAlpha(true);
-		image2 = new Image("/images/white.png");
-		image2.setAlpha(true);
-	}
-	
-	public void reset() {
+		wood = new Image("/images/texture.png");
+		wood.setAlpha(true);
+		
+		light = new Light(50, 0xffffffff);
 		
 	}
 
@@ -36,21 +36,19 @@ public class GameManager extends AbstractGame {
 	@Override
 	public void render(GameContainer gc, Renderer r) {
 		
-		for(int x = 0; x < image.getW(); x++) {
-			for(int y = 0; y < image.getH(); y++) {
-				r.setLightMap(x, y, image.getP()[x + y * image.getW()]);
-			}
-		}
-		
+		r.drawLight(light, gc.getInput().getMouseX(), gc.getInput().getMouseY());	
 		r.setzDepth(0);
-		r.drawImage(image2, gc.getInput().getMouseX(), gc.getInput().getMouseY());
+		r.drawImage(image, 0, 0);
 		r.setzDepth(1);
-		r.drawImage(image, 10, 10);
+		//r.drawImage(wood, gc.getInput().getMouseX(), gc.getInput().getMouseY());
+		
 
 	}
 
 	public static void main(String[] args) {
 		GameContainer gc = new GameContainer(new GameManager());
+		gc.setWindowSize(360, 240, 2f);
+		gc.setTitle("CidranEngine");
 		gc.start();
 	}
 
