@@ -22,7 +22,7 @@ public class Renderer {
 	private int[] lm;
 	private int[] lb;
 
-	private int ambientColor = 0x111111;
+	private int ambientColor = 0x333333;
 	private int zDepth = 0;
 	private boolean processing = false;
 
@@ -72,7 +72,8 @@ public class Renderer {
 			float g = ((lm[i] >> 8) & 0xff) / 255f;
 			float b = (lm[i] & 0xff) / 255f;
 
-			p[i] = ((int) (((p[i] >> 16) & 0xff) * r) << 16 | (int) (((p[i] >> 8) & 0xff) * g) << 8 | (int) ((p[i] & 0xff) * b));
+			p[i] = ((int) (((p[i] >> 16) & 0xff) * r) << 16 | (int) (((p[i] >> 8) & 0xff) * g) << 8
+					| (int) ((p[i] & 0xff) * b));
 		}
 
 		imageRequest.clear();
@@ -122,6 +123,17 @@ public class Renderer {
 		int maxBlue = Math.max(baseColor & 0xff, value & 0xff);
 
 		lm[x + y * pW] = (maxRed << 16 | maxGreen << 8 | maxBlue);
+	}
+	
+	public void setLightBlock(int x, int y, int value) {
+		if (x < 0 || x >= pW || y < 0 || y >= pH) {
+			return;
+		}
+		
+		if (zb[x + y * pW] > zDepth)
+			return;
+
+		lb[x + y * pW] = value;
 	}
 
 	public void drawText(String text, int offX, int offY, int color) {
@@ -173,6 +185,7 @@ public class Renderer {
 		for (int y = 0; y < newHeight; y++) {
 			for (int x = 0; x < newWidth; x++) {
 				setPixel(x + offX, y + offY, image.getP()[x + y * image.getW()]);
+				setLightBlock(x + offX, y + offY, image.getLightBlock());
 			}
 		}
 	}
@@ -203,8 +216,8 @@ public class Renderer {
 
 		for (int y = 0; y < newHeight; y++) {
 			for (int x = 0; x < newWidth; x++) {
-				setPixel(x + offX, y + offY,
-						image.getP()[(x + tileX * image.getTileW()) + (y + tileY * image.getTileH()) * image.getW()]);
+				setPixel(x + offX, y + offY, image.getP()[(x + tileX * image.getTileW()) + (y + tileY * image.getTileH()) * image.getW()]);
+				setLightBlock(x + offX, y + offY, image.getLightBlock());
 			}
 		}
 	}
@@ -247,48 +260,57 @@ public class Renderer {
 		}
 
 	}
-	
+
 	public void drawLight(Light l, int offX, int offY) {
-		for(int i = 0; i < l.getDiameter(); i++) {
+		for (int i = 0; i < l.getDiameter(); i++) {
 			drawLightLine(l, l.getRadius(), l.getRadius(), i, 0, offX, offY);
 			drawLightLine(l, l.getRadius(), l.getRadius(), i, l.getDiameter(), offX, offY);
 			drawLightLine(l, l.getRadius(), l.getRadius(), 0, i, offX, offY);
-			drawLightLine(l, l.getRadius(), l.getRadius(), l.getDiameter()-1, i, offX, offY);
+			drawLightLine(l, l.getRadius(), l.getRadius(), l.getDiameter() - 1, i, offX, offY);
 		}
 	}
-	
+
 	private void drawLightLine(Light l, int x0, int y0, int x1, int y1, int offX, int offY) {
 		int dx = Math.abs(x1 - x0);
 		int dy = Math.abs(y1 - y0);
-		
-		int sx = x0 < x1 ? 1: -1;
-		int sy = y0 < y1 ? 1: -1;
-		
+
+		int sx = x0 < x1 ? 1 : -1;
+		int sy = y0 < y1 ? 1 : -1;
+
 		int err = dx - dy;
 		int e2;
-		
-		while(true) {
-			
+
+		while (true) {
+
 			int screenX = x0 - l.getRadius() + offX;
 			int screenY = y0 - l.getRadius() + offY;
-			int lightColor = l.getLightValue(x0, y0);
-			
-			if(lightColor == 0) {
+
+			if (screenX < 0 || screenX >= pW || screenY < 0 || screenY >= pH) {
 				return;
 			}
-			
+
+			int lightColor = l.getLightValue(x0, y0);
+
+			if (lightColor == 0) {
+				return;
+			}
+
+			if (lb[screenX + screenY * pW] == Light.FULL) {
+				return;
+			}
+
 			setLightMap(screenX, screenY, lightColor);
-			
-			if(x0 == x1 && y0 == y1) {
+
+			if (x0 == x1 && y0 == y1) {
 				break;
 			}
 			e2 = 2 * err;
-			
-			if(e2 > -1 * dy) {
+
+			if (e2 > -1 * dy) {
 				err -= dy;
 				x0 += sx;
 			}
-			if(e2 < dx) {
+			if (e2 < dx) {
 				err += dx;
 				y0 += sy;
 			}

@@ -8,18 +8,18 @@ import engine.gfx.Light;
 
 public class GameManager extends AbstractGame {
 
-	private Image image, wood;
+	private Image image, blockTest;
 	private Light light;
 
 	public GameManager() {
 		
 		image = new Image("/images/pattern_bg.png");
-		image.setAlpha(true);
-		wood = new Image("/images/texture.png");
-		wood.setAlpha(true);
+		image.setAlpha(false);
+		blockTest = new Image("/images/block_test.png");
+		blockTest.setLightBlock(Light.FULL);
+		blockTest.setAlpha(false);
 		
-		light = new Light(50, 0xffffffff);
-		
+		light = new Light(400, 0xffffffff);
 	}
 
 	@Override
@@ -35,12 +35,14 @@ public class GameManager extends AbstractGame {
 
 	@Override
 	public void render(GameContainer gc, Renderer r) {
-		
-		r.drawLight(light, gc.getInput().getMouseX(), gc.getInput().getMouseY());	
+			
 		r.setzDepth(0);
 		r.drawImage(image, 0, 0);
 		r.setzDepth(1);
-		//r.drawImage(wood, gc.getInput().getMouseX(), gc.getInput().getMouseY());
+		
+		r.drawImage(blockTest, 120, 80);
+		
+		r.drawLight(light, gc.getInput().getMouseX(), gc.getInput().getMouseY());
 		
 
 	}
