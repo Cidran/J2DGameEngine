@@ -4,8 +4,11 @@ import java.awt.event.KeyEvent;
 
 import engine.GameContainer;
 import engine.Renderer;
+import engine.gfx.Image;
 
 public class Player extends GameObject{
+	
+	private Image image;
 	
 	private float speed = 200;
 	
@@ -15,6 +18,8 @@ public class Player extends GameObject{
 		this.posY = posY * 16;
 		this.width = 16;
 		this.height = 16;
+		
+		image = new Image("/images/player.png");
 	}
 
 	@Override
@@ -35,7 +40,7 @@ public class Player extends GameObject{
 
 	@Override
 	public void render(GameContainer gc, Renderer r) {
-		r.drawFillRect((int)posX, (int)posY, width, height, 0xffff0000);
+		r.drawImage(image, gc.getInput().getMouseX()-16, gc.getInput().getMouseY()-16);
 	}
 
 }

@@ -13,7 +13,9 @@ public class GameManager extends AbstractGame {
 	private List<GameObject> objects = new ArrayList<GameObject>();
 
 	public GameManager() {
+		
 		objects.add(new Player(2, 2));
+		objects.add(new Bullet());
 	}
 	
 	@Override
@@ -42,7 +44,7 @@ public class GameManager extends AbstractGame {
 
 	public static void main(String[] args) {
 		GameContainer gc = new GameContainer(new GameManager());
-		gc.setWindowSize(360, 240, 1.5f);
+		gc.setWindowSize(360, 240, 3f);
 		gc.setTitle("CidranEngine");
 		gc.start();
 	}
